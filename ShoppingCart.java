@@ -143,7 +143,7 @@ public class ShoppingCart {
                 break;
         }
         if (discount < 80) {
-            discount += quantity / 10;
+            discount += quantity / 10.
             if (discount > 80)
                 discount = 80;
         }
