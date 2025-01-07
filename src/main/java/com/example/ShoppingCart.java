@@ -7,7 +7,7 @@ public class ShoppingCart {
 
     public static enum ItemType { NEW, REGULAR, SECOND_FREE, SALE };
 
-    private final List<Item> items = new ArrayList<>();
+    private List<Item> items = new ArrayList<Item>();
 
     public static void main(String[] args) {
         ShoppingCart cart = new ShoppingCart();
@@ -30,16 +30,23 @@ public class ShoppingCart {
         item.price = price;
         item.quantity = quantity;
         item.type = type;
-        items.add(item);
+        items.add(item); 
     }
 
     public String formatTicket() {
+        return getFormattedTicketTable(.0);
+    }
+
+    private String getFormattedTicketTable(double total) {
+
         if (items.size() == 0)
-            return "No items.";
+            return "No items."; 
         List<String[]> lines = new ArrayList<>();
+
         String[] header = {"#","Item","Price","Quan.","Discount","Total"};
-        int[] align = { 1, -1, 1, 1, 1, 1 };
-        double total = 0.00;
+
+        int[] align = new int[]{ 1, -1, 1, 1, 1, 1 };
+        // formatting each line
         int index = 0;
         for (Item item : items) {
             int discount = calculateDiscount(item.type, item.quantity);
@@ -49,42 +56,43 @@ public class ShoppingCart {
                     item.title,
                     MONEY.format(item.price),
                     String.valueOf(item.quantity),
-                    (discount == 0) ? "-" : (String.valueOf(discount) + "%"),
+                    (discount == 0) ? "-" :(String.valueOf(discount) + "%"),
                     MONEY.format(itemTotal)
             });
             total += itemTotal;
         }
-        String[] footer = { String.valueOf(index),"","","","",
-                MONEY.format(total) };
-        int[] width = {0,0,0,0,0,0};
-        for (String[] line : lines) {
+
+        String[] footer = { String.valueOf(index),"","","","", MONEY.format(total) };
+
+        // column max length
+        int[] width = new int[]{0,0,0,0,0,0};
+        for (String[] line : lines)
             adjustColumnWidth(width, line);
-        }
         adjustColumnWidth(width, header);
         adjustColumnWidth(width, footer);
 
+        // line length
         int lineLength = width.length - 1;
         for (int w : width)
             lineLength += w;
         StringBuilder sb = new StringBuilder();
-
-        // Відформатований заголовок
-        appendFormattedLine(sb, header, align, width, true);
+        // header
+        appendFormattedLine(sb, header, align, width, true); // separator
         appendSeparator(sb, lineLength);
 
-        // Відформатовані рядки
-        for (String[] line : lines) {
-            appendFormattedLine(sb, line, align, width, true);
-        }
-
-        // Відформатований розділювач
-        if (lines.size() > 0) {
+        // lines
+        if(lines.isEmpty()){
+            sb.append("No items.\n");
+        } else {
+            for (String[] line : lines) {
+                appendFormattedLine(sb, line, align, width, true);
+            }
+            // separator
             appendSeparator(sb, lineLength);
         }
-
-        // Відформатований підсумок
+        
+        // footer
         appendFormattedLine(sb, footer, align, width, false);
-
         return sb.toString();
     }
 
@@ -96,7 +104,7 @@ public class ShoppingCart {
 
     private void adjustColumnWidth(int[] width, String[] columns) {
         for (int i = 0; i < width.length; i++)
-            width[i] = Math.max(width[i], columns[i].length());
+            width[i] = (int) Math.max(width[i], columns[i].length());
     }
 
     private void appendFormattedLine(StringBuilder sb, String[] line, int[] align, int[] width, boolean newLine) {
@@ -115,13 +123,12 @@ public class ShoppingCart {
 
     public static void appendFormatted(StringBuilder sb, String value, int align, int width) {
         if (value.length() > width)
-            value = value.substring(0, width);
-
+            value = value.substring(0, width); 
         int before = 0;
         int after = 0;
 
-        switch (align) {
-            case 0: // Центрований вирівнювання
+        switch(align) {
+            case 0: // Центроване вирівнювання
                 before = (width - value.length()) / 2;
                 after = width - value.length() - before;
                 break;
@@ -138,9 +145,7 @@ public class ShoppingCart {
         for (int i = 0; i < before; i++) {
             sb.append(" ");
         }
-
         sb.append(value);
-
         for (int i = 0; i < after; i++) {
             sb.append(" ");
         }
@@ -149,7 +154,7 @@ public class ShoppingCart {
     public static int calculateDiscount(ItemType type, int quantity) {
         int discount = 0;
         switch (type) {
-            case NEW:
+            case NEW: 
                 return 0;
             case REGULAR:
                 discount = 0;
