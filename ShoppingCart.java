@@ -67,6 +67,7 @@ public class ShoppingCart {
             lineLength += w;
         StringBuilder sb = new StringBuilder();
 
+        // new code with extracted methods
         appendFormattedLine(sb, header, align, width, true);
         appendSeparator(sb, lineLength);
                                  
@@ -82,7 +83,7 @@ public class ShoppingCart {
         return sb.toString();
     }
 
-    private void appendSeparator(StringBuilder sb, int lineLength){ 
+    private void appendSeparator(StringBuilder sb, int lineLength){
         for(int i = 0; i < lineLength; i++)
             sb.append("-");
         sb.append("\n");
@@ -143,7 +144,7 @@ public class ShoppingCart {
                 break;
         }
         if (discount < 80) {
-            discount += quantity / 10.
+            discount += quantity / 10;
             if (discount > 80)
                 discount = 80;
         }
