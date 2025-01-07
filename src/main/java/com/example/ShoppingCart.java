@@ -34,64 +34,63 @@ public class ShoppingCart {
     }
 
     public String formatTicket() {
-        return getFormattedTicketTable(.0);
+        return getFormattedTicketTable(0.00);
+    }
+
+    private List<String[]> convertItemsToTableLines() {
+        List<String[]> lines = new ArrayList<>();
+        int index = 0;
+        for (Item item : items) {
+            int discount = calculateDiscount(item.type, item.quantity);
+            double itemTotal = item.price * item.quantity * (100.00 - discount) / 100.00;
+            lines.add(new String[]{
+                String.valueOf(++index),
+                item.title,
+                MONEY.format(item.price),
+                String.valueOf(item.quantity),
+                (discount == 0) ? "-" :(String.valueOf(discount) + "%"),
+                MONEY.format(itemTotal)
+            });
+        }
+        return lines;
     }
 
     private String getFormattedTicketTable(double total) {
 
         if (items.size() == 0)
             return "No items."; 
-        List<String[]> lines = new ArrayList<>();
 
         String[] header = {"#","Item","Price","Quan.","Discount","Total"};
-
         int[] align = new int[]{ 1, -1, 1, 1, 1, 1 };
-        // formatting each line
-        int index = 0;
-        for (Item item : items) {
-            int discount = calculateDiscount(item.type, item.quantity);
-            double itemTotal = item.price * item.quantity * (100.00 - discount) / 100.00;
-            lines.add(new String[]{
-                    String.valueOf(++index),
-                    item.title,
-                    MONEY.format(item.price),
-                    String.valueOf(item.quantity),
-                    (discount == 0) ? "-" :(String.valueOf(discount) + "%"),
-                    MONEY.format(itemTotal)
-            });
-            total += itemTotal;
+        List<String[]> lines = convertItemsToTableLines();
+
+        // Індекс і обчислення загальної суми
+        for (String[] line : lines) {
+            total += Double.parseDouble(line[5].replace("$", ""));
         }
 
-        String[] footer = { String.valueOf(index),"","","","", MONEY.format(total) };
-
-        // column max length
-        int[] width = new int[]{0,0,0,0,0,0};
-        for (String[] line : lines)
+        String[] footer = { String.valueOf(lines.size()),"","","","", MONEY.format(total) };
+        int[] width = {0,0,0,0,0,0};
+        for (String[] line : lines) {
             adjustColumnWidth(width, line);
+        }
         adjustColumnWidth(width, header);
         adjustColumnWidth(width, footer);
 
-        // line length
         int lineLength = width.length - 1;
         for (int w : width)
             lineLength += w;
         StringBuilder sb = new StringBuilder();
-        // header
-        appendFormattedLine(sb, header, align, width, true); // separator
+        appendFormattedLine(sb, header, align, width, true); 
         appendSeparator(sb, lineLength);
 
-        // lines
-        if(lines.isEmpty()){
-            sb.append("No items.\n");
-        } else {
-            for (String[] line : lines) {
-                appendFormattedLine(sb, line, align, width, true);
-            }
-            // separator
+        for (String[] line : lines) {
+            appendFormattedLine(sb, line, align, width, true);
+        }
+
+        if(lines.size() > 0){
             appendSeparator(sb, lineLength);
         }
-        
-        // footer
         appendFormattedLine(sb, footer, align, width, false);
         return sb.toString();
     }
@@ -132,11 +131,11 @@ public class ShoppingCart {
                 before = (width - value.length()) / 2;
                 after = width - value.length() - before;
                 break;
-            case 1: // Вирівнювання праворуч
+            case 1: // Вирівнювання вправо
                 before = width - value.length();
                 after = 0;
                 break;
-            case -1: // Вирівнювання ліворуч
+            case -1: // Вирівнювання вліво
                 before = 0;
                 after = width - value.length();
                 break;

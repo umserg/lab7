@@ -9,23 +9,23 @@ public class ShoppingCartTest {
     public void testAppendFormatted() {
         StringBuilder sb = new StringBuilder();
         ShoppingCart.appendFormatted(sb, "SomeLine", 0, 14);
-        System.out.println("'" + sb.toString() + "'");
+        System.out.println("'" + sb.toString() + "'"); 
         assertEquals("   SomeLine   ", sb.toString());
         sb = new StringBuilder();
         ShoppingCart.appendFormatted(sb, "SomeLine", 0, 15);
-        System.out.println("'" + sb.toString() + "'");
+        System.out.println("'" + sb.toString() + "'"); 
         assertEquals("   SomeLine    ", sb.toString());
         sb = new StringBuilder();
         ShoppingCart.appendFormatted(sb, "SomeLine", 0, 5);
-        System.out.println("'" + sb.toString() + "'");
+        System.out.println("'" + sb.toString() + "'"); 
         assertEquals("SomeL", sb.toString());
         sb = new StringBuilder();
         ShoppingCart.appendFormatted(sb, "SomeLine", 1, 14);
-        System.out.println("'" + sb.toString() + "'");
+        System.out.println("'" + sb.toString() + "'"); 
         assertEquals("      SomeLine", sb.toString());
         sb = new StringBuilder();
         ShoppingCart.appendFormatted(sb, "SomeLine", -1, 14);
-        System.out.println("'" + sb.toString() + "'");
+        System.out.println("'" + sb.toString() + "'"); 
         assertEquals("SomeLine      ", sb.toString());
     }
 
